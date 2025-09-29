@@ -34,6 +34,7 @@ nanobind_add_module(
         src/py_rtab_ext.cpp
         src/py_odometry.cpp
         src/py_transform.cpp
+        src/py_camera_model.cpp
 )
 
 add_stub(

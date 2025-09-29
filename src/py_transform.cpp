@@ -19,7 +19,7 @@ void bindTransform(nb::module_ &m) {
             .def(nb::init<float, float, float, float, float, float>())
             .def(nb::init<float, float, float, float, float, float, float>())
             .def(nb::init<float, float, float>())
-            .def(")", &Transform::clone)
+            .def("clone", &Transform::clone)
             .def("r11", &Transform::r11)
             .def("r12", &Transform::r12)
             .def("r13", &Transform::r13)
