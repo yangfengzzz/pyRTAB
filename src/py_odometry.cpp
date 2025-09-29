@@ -5,6 +5,9 @@
 //  property of any third parties.
 
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/map.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/string.h>
 #include <rtabmap/core/Odometry.h>
 #include <rtabmap/core/OdometryInfo.h>
 
@@ -13,11 +16,75 @@ using namespace nb::literals;
 using namespace rtabmap;
 
 void bindOdometry(nb::module_ &m) {
+    nb::enum_<Odometry::Type>(m, "OdometryType")
+            .value("kTypeUndef", Odometry::kTypeUndef)
+            .value("kTypeF2M", Odometry::kTypeF2M)
+            .value("kTypeF2F", Odometry::kTypeF2F)
+            .value("kTypeFovis", Odometry::kTypeFovis)
+            .value("kTypeViso2", Odometry::kTypeViso2)
+            .value("kTypeDVO", Odometry::kTypeDVO)
+            .value("kTypeORBSLAM", Odometry::kTypeORBSLAM)
+            .value("kTypeOkvis", Odometry::kTypeOkvis)
+            .value("kTypeLOAM", Odometry::kTypeLOAM)
+            .value("kTypeMSCKF", Odometry::kTypeMSCKF)
+            .value("kTypeVINSFusion", Odometry::kTypeVINSFusion)
+            .value("kTypeOpenVINS", Odometry::kTypeOpenVINS)
+            .value("kTypeFLOAM", Odometry::kTypeFLOAM)
+            .value("kTypeOpen3D", Odometry::kTypeOpen3D);
+
     nb::class_<Odometry>(m, "Odometry")
+            .def_static("create", []() { Odometry::create(); })
+            .def_static("create", [](Odometry::Type &type) { Odometry::create(type); })
             .def("process", nb::overload_cast<SensorData &, OdometryInfo *>(&Odometry::process))
             .def("process", nb::overload_cast<SensorData &, const Transform &, OdometryInfo *>(&Odometry::process))
             .def("reset", &Odometry::reset)
             .def("getType", &Odometry::getType)
             .def("canProcessRawImages", &Odometry::canProcessRawImages)
-            .def("canProcessAsyncIMU", &Odometry::canProcessAsyncIMU);
+            .def("canProcessAsyncIMU", &Odometry::canProcessAsyncIMU)
+            .def("getPose", &Odometry::getPose)
+            .def("isInfoDataFilled", &Odometry::isInfoDataFilled)
+            .def("getVelocityGuess", &Odometry::getVelocityGuess)
+            .def("previousStamp", &Odometry::previousStamp)
+            .def("framesProcessed", &Odometry::framesProcessed)
+            .def("imagesAlreadyRectified", &Odometry::imagesAlreadyRectified);
+
+    nb::class_<OdometryInfo>(m, "OdometryInfo")
+            .def(nb::init<>())
+            .def("statistics", &OdometryInfo::statistics)
+            .def_rw("lost", &OdometryInfo::lost)
+            .def_rw("reg", &OdometryInfo::reg)
+            .def_rw("features", &OdometryInfo::features)
+            .def_rw("localMapSize", &OdometryInfo::localMapSize)
+            .def_rw("localScanMapSize", &OdometryInfo::localScanMapSize)
+            .def_rw("localKeyFrames", &OdometryInfo::localKeyFrames)
+            .def_rw("localBundleOutliers", &OdometryInfo::localBundleOutliers)
+            .def_rw("localBundleConstraints", &OdometryInfo::localBundleConstraints)
+            .def_rw("localBundleTime", &OdometryInfo::localBundleTime)
+            .def_rw("localBundlePoses", &OdometryInfo::localBundlePoses)
+            .def_rw("localBundleModels", &OdometryInfo::localBundleModels)
+            .def_rw("localBundleAvgInlierDistance", &OdometryInfo::localBundleAvgInlierDistance)
+            .def_rw("localBundleMaxKeyFramesForInlier", &OdometryInfo::localBundleMaxKeyFramesForInlier)
+            .def_rw("localBundleOutliersPerCam", &OdometryInfo::localBundleOutliersPerCam)
+            .def_rw("keyFrameAdded", &OdometryInfo::keyFrameAdded)
+            .def_rw("timeDeskewing", &OdometryInfo::timeDeskewing)
+            .def_rw("timeEstimation", &OdometryInfo::timeEstimation)
+            .def_rw("timeParticleFiltering", &OdometryInfo::timeParticleFiltering)
+            .def_rw("stamp", &OdometryInfo::stamp)
+            .def_rw("interval", &OdometryInfo::interval)
+            .def_rw("transform", &OdometryInfo::transform)
+            .def_rw("transformFiltered", &OdometryInfo::transformFiltered)
+            .def_rw("transformGroundTruth", &OdometryInfo::transformGroundTruth)
+            .def_rw("guessVelocity", &OdometryInfo::guessVelocity)
+            .def_rw("guess", &OdometryInfo::guess)
+            .def_rw("distanceTravelled", &OdometryInfo::distanceTravelled)
+            .def_rw("memoryUsage", &OdometryInfo::memoryUsage)
+            .def_rw("gravityRollError", &OdometryInfo::gravityRollError)
+            .def_rw("gravityPitchError", &OdometryInfo::gravityPitchError)
+            .def_rw("type", &OdometryInfo::type)
+            .def_rw("words", &OdometryInfo::words)
+            .def_rw("localMap", &OdometryInfo::localMap)
+            .def_rw("localScanMap", &OdometryInfo::localScanMap)
+            .def_rw("refCorners", &OdometryInfo::refCorners)
+            .def_rw("newCorners", &OdometryInfo::newCorners)
+            .def_rw("cornerInliers", &OdometryInfo::cornerInliers);
 }
