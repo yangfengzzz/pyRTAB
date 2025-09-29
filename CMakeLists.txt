@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.31)
 project(pyRTAB)
 
+include("cmake/add_stub.cmake")
+
 set(CMAKE_CXX_STANDARD 20)
 
 # Try to import all Python components potentially needed by nanobind
@@ -32,7 +34,7 @@ nanobind_add_module(
         src/py_rtab_ext.cpp
 )
 
-nanobind_add_stub(
+add_stub(
         rtab_stub
         MODULE rtab_ext
         OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/py_rtab
