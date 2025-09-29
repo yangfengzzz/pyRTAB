@@ -11,8 +11,11 @@ namespace nb = nanobind;
 
 using namespace nb::literals;
 
-NB_MODULE(rtab_ext, m)
-{
+void bindOdometry(nb::module_ &m);
+
+NB_MODULE(rtab_ext, m) {
     m.doc() = "This is a \"hello world\" example with nanobind";
     m.def("add", [](int a, int b) { return a + b; }, "a"_a, "b"_a);
+
+    bindOdometry(m);
 }
