@@ -33,6 +33,7 @@ nanobind_add_module(
         # Source code goes here
         src/py_rtab_ext.cpp
         src/py_odometry.cpp
+        src/py_transform.cpp
 )
 
 add_stub(
