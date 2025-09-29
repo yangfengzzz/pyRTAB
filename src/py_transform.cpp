@@ -8,6 +8,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/map.h>
 #include <rtabmap/core/Transform.h>
+#include "cv_typecaster.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;

@@ -3,7 +3,7 @@ project(pyRTAB)
 
 include("cmake/add_stub.cmake")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 # Try to import all Python components potentially needed by nanobind
 find_package(Python 3.8

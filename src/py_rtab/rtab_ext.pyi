@@ -2,6 +2,8 @@ from collections.abc import Mapping, Sequence
 import enum
 from typing import overload
 
+import numpy
+
 
 class CameraModel:
     @overload
@@ -427,9 +429,9 @@ class Transform:
 
     def is4DoF(self) -> bool: ...
 
-    def rotationMatrix(self) -> "cv::Mat": ...
+    def rotationMatrix(self) -> numpy.array: ...
 
-    def translationMatrix(self) -> "cv::Mat": ...
+    def translationMatrix(self) -> numpy.array: ...
 
     def getTranslationAndEulerAngles(self, arg0: float, arg1: float, arg2: float, arg3: float, arg4: float, arg5: float, /) -> None: ...
 
