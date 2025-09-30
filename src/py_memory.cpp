@@ -10,6 +10,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/list.h>
 #include <nanobind/stl/set.h>
+#include <nanobind/eigen/dense.h>
 #include <rtabmap/core/Memory.h>
 #include <rtabmap/core/Statistics.h>
 #include <rtabmap/core/VWDictionary.h>

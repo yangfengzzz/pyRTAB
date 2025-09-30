@@ -7,6 +7,7 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/map.h>
+#include <nanobind/eigen/dense.h>
 #include <rtabmap/core/Transform.h>
 #include "cv_typecaster.h"
 
@@ -60,10 +61,10 @@ void bindTransform(nb::module_ &m) {
             .def("prettyPrint", &Transform::prettyPrint)
             .def("toEigen4f", &Transform::toEigen4f)
             .def("toEigen4d", &Transform::toEigen4d)
-            .def("toEigen3f", &Transform::toEigen3f)
-            .def("toEigen3d", &Transform::toEigen3d)
-            .def("getQuaternionf", &Transform::getQuaternionf)
-            .def("getQuaterniond", &Transform::getQuaterniond)
+            // .def("toEigen3f", &Transform::toEigen3f)
+            // .def("toEigen3d", &Transform::toEigen3d)
+            // .def("getQuaternionf", &Transform::getQuaternionf)
+            // .def("getQuaterniond", &Transform::getQuaterniond)
             .def_static("getIdentity", &Transform::getIdentity)
             .def_static("fromEigen4f", &Transform::fromEigen4f)
             .def_static("fromEigen4d", &Transform::fromEigen4d)
