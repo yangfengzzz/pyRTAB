@@ -62,7 +62,7 @@ target_link_libraries(rtab_ext PRIVATE
 ######################
 # install libraries
 ######################
-install(TARGETS rtab_ext LIBRARY DESTINATION py_rtab)
+install(TARGETS rtab_ext rtabmap_core rtabmap_utilite LIBRARY DESTINATION py_rtab)
 
 file(GLOB PY_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/py_rtab/*.py" "${CMAKE_CURRENT_SOURCE_DIR}/src/py_rtab/*.pyi")
 install(FILES ${PY_FILES} DESTINATION py_rtab)
