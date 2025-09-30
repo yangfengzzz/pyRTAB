@@ -26,6 +26,9 @@ void bindCameraModel(nb::module_ &m);
 void bindSensorData(nb::module_ &m);
 void bindLaserScan(nb::module_ &m);
 void bindStereoCameraModel(nb::module_ &m);
+void bindStatistics(nb::module_ &m);
+void bindSignature(nb::module_ &m);
+void bindLink(nb::module_ &m);
 
 NB_MODULE(rtab_ext, m) {
     m.doc() = "This is a \"hello world\" example with nanobind";
@@ -37,6 +40,9 @@ NB_MODULE(rtab_ext, m) {
     bindSensorData(m);
     bindLaserScan(m);
     bindStereoCameraModel(m);
+    bindStatistics(m);
+    bindSignature(m);
+    bindLink(m);
 
     nb::class_<Rtabmap>(m, "Rtabmap")
             .def(nb::init<>())
@@ -131,5 +137,10 @@ NB_MODULE(rtab_ext, m) {
             .def("getForwardWMPoses", &Rtabmap::getForwardWMPoses)
             .def("getPaths", &Rtabmap::getPaths)
             .def("adjustLikelihood", &Rtabmap::adjustLikelihood);
-            // .def("selectHypothesis", &Rtabmap::selectHypothesis);
+    // .def("selectHypothesis", &Rtabmap::selectHypothesis);
+
+    nb::class_<ProgressState>(m, "ProgressState")
+            .def(nb::init<>())
+            .def("setCanceled", &ProgressState::setCanceled)
+            .def("isCanceled", &ProgressState::isCanceled);
 }
