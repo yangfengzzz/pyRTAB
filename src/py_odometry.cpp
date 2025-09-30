@@ -10,6 +10,7 @@
 #include <nanobind/stl/string.h>
 #include <rtabmap/core/Odometry.h>
 #include <rtabmap/core/OdometryInfo.h>
+#include "cv_typecaster.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;
@@ -87,4 +88,28 @@ void bindOdometry(nb::module_ &m) {
             .def_rw("refCorners", &OdometryInfo::refCorners)
             .def_rw("newCorners", &OdometryInfo::newCorners)
             .def_rw("cornerInliers", &OdometryInfo::cornerInliers);
+
+    nb::class_<RegistrationInfo>(m, "RegistrationInfo")
+            .def(nb::init<>())
+            .def("copyWithoutData", &RegistrationInfo::copyWithoutData)
+            .def_rw("covariance", &RegistrationInfo::covariance)
+            .def_rw("rejectedMsg", &RegistrationInfo::rejectedMsg)
+            .def_rw("totalTime", &RegistrationInfo::totalTime)
+            .def_rw("inliers", &RegistrationInfo::inliers)
+            .def_rw("inliersRatio", &RegistrationInfo::inliersRatio)
+            .def_rw("inliersMeanDistance", &RegistrationInfo::inliersMeanDistance)
+            .def_rw("inliersDistribution", &RegistrationInfo::inliersDistribution)
+            .def_rw("inliersIDs", &RegistrationInfo::inliersIDs)
+            .def_rw("matches", &RegistrationInfo::matches)
+            .def_rw("matchesIDs", &RegistrationInfo::matchesIDs)
+            .def_rw("projectedIDs", &RegistrationInfo::projectedIDs)
+            .def_rw("inliersPerCam", &RegistrationInfo::inliersPerCam)
+            .def_rw("matchesPerCam", &RegistrationInfo::matchesPerCam)
+            .def_rw("icpInliersRatio", &RegistrationInfo::icpInliersRatio)
+            .def_rw("icpTranslation", &RegistrationInfo::icpTranslation)
+            .def_rw("icpRotation", &RegistrationInfo::icpRotation)
+            .def_rw("icpStructuralComplexity", &RegistrationInfo::icpStructuralComplexity)
+            .def_rw("icpStructuralDistribution", &RegistrationInfo::icpStructuralDistribution)
+            .def_rw("icpCorrespondences", &RegistrationInfo::icpCorrespondences)
+            .def_rw("icpRMS", &RegistrationInfo::icpRMS);
 }

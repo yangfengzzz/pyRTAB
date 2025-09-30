@@ -37,6 +37,7 @@ nanobind_add_module(
         src/py_camera_model.cpp
         src/py_sensor_data.cpp
         src/py_laser_scan.cpp
+        src/py_stereo_camera_model.cpp
 )
 
 add_stub(
