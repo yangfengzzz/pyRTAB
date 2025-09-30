@@ -81,7 +81,7 @@ void bindOdometry(nb::module_ &m) {
             .def_rw("gravityRollError", &OdometryInfo::gravityRollError)
             .def_rw("gravityPitchError", &OdometryInfo::gravityPitchError)
             .def_rw("type", &OdometryInfo::type)
-            .def_rw("words", &OdometryInfo::words)
+            // .def_rw("words", &OdometryInfo::words)
             .def_rw("localMap", &OdometryInfo::localMap)
             .def_rw("localScanMap", &OdometryInfo::localScanMap)
             .def_rw("refCorners", &OdometryInfo::refCorners)

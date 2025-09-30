@@ -14,6 +14,8 @@ using namespace nb::literals;
 void bindOdometry(nb::module_ &m);
 void bindTransform(nb::module_ &m);
 void bindCameraModel(nb::module_ &m);
+void bindSensorData(nb::module_ &m);
+void bindLaserScan(nb::module_ &m);
 
 NB_MODULE(rtab_ext, m) {
     m.doc() = "This is a \"hello world\" example with nanobind";
@@ -22,4 +24,6 @@ NB_MODULE(rtab_ext, m) {
     bindOdometry(m);
     bindTransform(m);
     bindCameraModel(m);
+    bindSensorData(m);
+    bindLaserScan(m);
 }

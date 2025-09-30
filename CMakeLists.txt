@@ -35,6 +35,8 @@ nanobind_add_module(
         src/py_odometry.cpp
         src/py_transform.cpp
         src/py_camera_model.cpp
+        src/py_sensor_data.cpp
+        src/py_laser_scan.cpp
 )
 
 add_stub(
