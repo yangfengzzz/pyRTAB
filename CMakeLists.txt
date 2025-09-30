@@ -41,6 +41,10 @@ nanobind_add_module(
         src/py_statistics.cpp
         src/py_signature.cpp
         src/py_link.cpp
+        src/py_memory.cpp
+        src/py_feature2d.cpp
+        src/py_vw_dictionary.cpp
+        src/py_visual_word.cpp
 )
 
 add_stub(

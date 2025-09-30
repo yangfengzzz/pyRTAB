@@ -29,10 +29,13 @@ void bindStereoCameraModel(nb::module_ &m);
 void bindStatistics(nb::module_ &m);
 void bindSignature(nb::module_ &m);
 void bindLink(nb::module_ &m);
+void bindMemory(nb::module_& m);
+void bindFeature2D(nb::module_ &m);
+void bindVWDictionary(nb::module_ &m);
+void bindVisualWord(nb::module_ &m);
 
 NB_MODULE(rtab_ext, m) {
-    m.doc() = "This is a \"hello world\" example with nanobind";
-    m.def("add", [](int a, int b) { return a + b; }, "a"_a, "b"_a);
+    m.doc() = "nanobind for rtabmap";
 
     bindOdometry(m);
     bindTransform(m);
@@ -43,6 +46,10 @@ NB_MODULE(rtab_ext, m) {
     bindStatistics(m);
     bindSignature(m);
     bindLink(m);
+    bindMemory(m);
+    bindFeature2D(m);
+    bindVWDictionary(m);
+    bindVisualWord(m);
 
     nb::class_<Rtabmap>(m, "Rtabmap")
             .def(nb::init<>())
