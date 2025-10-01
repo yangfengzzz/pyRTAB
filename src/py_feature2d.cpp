@@ -22,7 +22,12 @@ void bindFeature2D(nb::module_ &m) {
             .def("getMinDepth", &Feature2D::getMinDepth)
             .def("getMaxDepth", &Feature2D::getMaxDepth)
             .def("getGridRows", &Feature2D::getGridRows)
-            .def("getGridCols", &Feature2D::getGridCols);
+            .def("getGridCols", &Feature2D::getGridCols)
+            .def("generateKeypoints", &Feature2D::generateKeypoints, "image"_a, "mask"_a)
+            .def("generateDescriptors", &Feature2D::generateDescriptors, "image"_a, "keypoints"_a)
+            .def("generateKeypoints3D", &Feature2D::generateKeypoints3D, "data"_a, "keypoints"_a)
+            .def("parseParameters", &Feature2D::parseParameters, "parameters"_a)
+            .def("getParameters", &Feature2D::getParameters);
 
     nb::enum_<Feature2D::Type>(m, "Feature2DType")
             .value("kFeatureUndef", Feature2D::Type::kFeatureUndef)
