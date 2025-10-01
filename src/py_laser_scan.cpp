@@ -16,27 +16,34 @@ using namespace rtabmap;
 
 void bindLaserScan(nb::module_ &m) {
     nb::class_<LaserScan>(m, "LaserScan")
-            .def_static("isScan2d", &LaserScan::isScan2d)
-            .def_static("isScanHasNormals", &LaserScan::isScanHasNormals)
-            .def_static("isScanHasRGB", &LaserScan::isScanHasRGB)
-            .def_static("isScanHasIntensity", &LaserScan::isScanHasIntensity)
-            .def_static("isScanHasTime", &LaserScan::isScanHasTime)
-            .def_static("backwardCompatibility",
-                        [](const cv::Mat &oldScanFormat, int maxPoints = 0, int maxRange = 0) {
-                            return LaserScan::backwardCompatibility(oldScanFormat, maxPoints, maxRange);
-                        })
-            .def_static("backwardCompatibility",
-                        [](const cv::Mat &oldScanFormat, float minRange, float maxRange, float angleMin, float angleMax,
-                           float angleInc) {
-                            return LaserScan::backwardCompatibility(oldScanFormat, minRange, maxRange, angleMin,
-                                                                    angleMax, angleInc);
-                        })
+            .def_static("isScan2d", &LaserScan::isScan2d, "format"_a)
+            .def_static("isScanHasNormals", &LaserScan::isScanHasNormals, "format"_a)
+            .def_static("isScanHasRGB", &LaserScan::isScanHasRGB, "format"_a)
+            .def_static("isScanHasIntensity", &LaserScan::isScanHasIntensity, "format"_a)
+            .def_static("isScanHasTime", &LaserScan::isScanHasTime, "format"_a)
+            .def_static(
+                    "backwardCompatibility",
+                    [](const cv::Mat &oldScanFormat, int maxPoints = 0, int maxRange = 0) {
+                        return LaserScan::backwardCompatibility(oldScanFormat, maxPoints, maxRange);
+                    },
+                    "oldScanFormat"_a, "maxPoints"_a = 0, "maxRange"_a = 0)
+            .def_static(
+                    "backwardCompatibility",
+                    [](const cv::Mat &oldScanFormat, float minRange, float maxRange, float angleMin, float angleMax,
+                       float angleInc) {
+                        return LaserScan::backwardCompatibility(oldScanFormat, minRange, maxRange, angleMin, angleMax,
+                                                                angleInc);
+                    },
+                    "oldScanFormat"_a, "minRange"_a, "maxRange"_a, "angleMin"_a, "angleMax"_a, "angleInc"_a)
 
             .def(nb::init<>())
-            .def(nb::init<const LaserScan &, int, float>())
-            .def(nb::init<const cv::Mat &, int, float, LaserScan::Format>())
-            .def(nb::init<const LaserScan &, float, float, float, float, float>())
-            .def(nb::init<const cv::Mat &, LaserScan::Format, float, float, float, float, float>())
+            .def(nb::init<const LaserScan &, int, float>(), "data"_a, "maxPoints"_a, "maxRange"_a)
+            .def(nb::init<const cv::Mat &, int, float, LaserScan::Format>(), "data"_a, "maxPoints"_a, "maxRange"_a,
+                 "format"_a)
+            .def(nb::init<const LaserScan &, float, float, float, float, float>(), "data"_a, "minRange"_a, "maxRange"_a,
+                 "angleMin"_a, "angleMax"_a, "angleIncrement"_a)
+            .def(nb::init<const cv::Mat &, LaserScan::Format, float, float, float, float, float>(), "data"_a,
+                 "format"_a, "minRange"_a, "maxRange"_a, "angleMin"_a, "angleMax"_a, "angleIncrement"_a)
             .def("clone", &LaserScan::clone)
             .def("data", &LaserScan::data)
             .def("format", &LaserScan::format)
@@ -48,7 +55,7 @@ void bindLaserScan(nb::module_ &m) {
             .def("angleMin", &LaserScan::angleMin)
             .def("angleMax", &LaserScan::angleMax)
             .def("angleIncrement", &LaserScan::angleIncrement)
-            .def("setLocalTransform", &LaserScan::setLocalTransform)
+            .def("setLocalTransform", &LaserScan::setLocalTransform, "t"_a)
             .def("localTransform", &LaserScan::localTransform)
             .def("empty", &LaserScan::empty)
             .def("isEmpty", &LaserScan::isEmpty)
@@ -67,7 +74,7 @@ void bindLaserScan(nb::module_ &m) {
             .def("getRGBOffset", &LaserScan::getRGBOffset)
             .def("getNormalsOffset", &LaserScan::getNormalsOffset)
             .def("getTimeOffset", &LaserScan::getTimeOffset)
-            .def("field", &LaserScan::field)
+            .def("field", &LaserScan::field, "pointIndex"_a, "channelOffset"_a)
             .def("clear", &LaserScan::clear);
 
     nb::enum_<LaserScan::Format>(m, "LaserScanFormat")
