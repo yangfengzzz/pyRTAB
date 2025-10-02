@@ -1,4 +1,6 @@
-if __name__ == '__main__':
-    import py_rtab
+import py_rtab
 
-    print("ke")
+if __name__ == '__main__':
+    odom = py_rtab.Odometry.create()
+    rtabmap = py_rtab.Rtabmap()
+    rtabmap.init()

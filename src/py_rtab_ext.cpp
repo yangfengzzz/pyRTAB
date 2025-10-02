@@ -67,9 +67,9 @@ NB_MODULE(rtab_ext, m) {
                  nb::overload_cast<const cv::Mat &, int, const std::map<std::string, float> &>(&Rtabmap::process),
                  "image"_a, "id"_a, "externalStats"_a)
             .def("init", nb::overload_cast<const ParametersMap &, const std::string &, bool>(&Rtabmap::init),
-                 "parameters"_a, "databasePath"_a, "loadDatabaseParameters"_a)
+                 "parameters"_a, "databasePath"_a = "", "loadDatabaseParameters"_a = false)
             .def("init", nb::overload_cast<const std::string &, const std::string &, bool>(&Rtabmap::init),
-                 "configFile"_a, "databasePath"_a, "loadDatabaseParameters"_a)
+                 "configFile"_a = "", "databasePath"_a = "", "loadDatabaseParameters"_a = false)
             .def("close", &Rtabmap::close, "databaseSaved"_a = true, "ouputDatabasePath"_a = "")
             .def("getWorkingDir", &Rtabmap::getWorkingDir)
             .def("isRGBDMode", &Rtabmap::isRGBDMode)
