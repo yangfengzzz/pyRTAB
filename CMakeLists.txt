@@ -47,6 +47,7 @@ nanobind_add_module(
         src/py_visual_word.cpp
 
         src/py_sensor_capture.cpp
+        src/camera/py_camera.cpp
 )
 
 add_stub(

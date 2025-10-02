@@ -36,6 +36,7 @@ void bindVWDictionary(nb::module_ &m);
 void bindVisualWord(nb::module_ &m);
 
 void bindSensorCapture(nb::module_ &m);
+void bindCamera(nb::module_ &m);
 
 NB_MODULE(rtab_ext, m) {
     m.doc() = "nanobind for rtabmap";
@@ -55,6 +56,7 @@ NB_MODULE(rtab_ext, m) {
     bindVisualWord(m);
 
     bindSensorCapture(m);
+    bindCamera(m);
 
     nb::class_<Rtabmap>(m, "Rtabmap")
             .def(nb::init<>())
