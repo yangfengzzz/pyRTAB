@@ -45,6 +45,8 @@ nanobind_add_module(
         src/py_feature2d.cpp
         src/py_vw_dictionary.cpp
         src/py_visual_word.cpp
+
+        src/py_sensor_capture.cpp
 )
 
 add_stub(
