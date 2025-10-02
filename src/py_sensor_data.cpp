@@ -18,33 +18,45 @@ using namespace rtabmap;
 void bindSensorData(nb::module_ &m) {
     nb::class_<SensorData>(m, "SensorData")
             .def(nb::init<>())
-            .def(nb::init<const cv::Mat &, int, double>())
-            .def(nb::init<const cv::Mat &, const CameraModel &, int, double>())
-            .def(nb::init<const cv::Mat &, const cv::Mat &, const CameraModel &, int, double>())
+            .def(nb::init<const cv::Mat &, int, double>(), "image"_a, "id"_a, "stamp"_a)
+            .def(nb::init<const cv::Mat &, const CameraModel &, int, double>(), "image"_a, "cameraModel"_a, "id"_a,
+                 "stamp"_a)
+            .def(nb::init<const cv::Mat &, const cv::Mat &, const CameraModel &, int, double>(), "rgb"_a, "depth"_a,
+                 "cameraModel"_a, "id"_a, "stamp"_a)
             // .def(nb::init<const cv::Mat &, const cv::Mat &, const cv::Mat &, const CameraModel &, int, double>())
-            .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const CameraModel &, int, double>())
+            .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const CameraModel &, int, double>(),
+                 "laserScan"_a, "rgb"_a, "depth"_a, "cameraModel"_a, "id"_a, "stamp"_a)
             .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const cv::Mat &, const CameraModel &,
-                          int, double>())
-            .def(nb::init<const cv::Mat &, const cv::Mat &, const std::vector<CameraModel> &, int, double>())
+                          int, double>(),
+                 "laserScan"_a, "rgb"_a, "depth"_a, "depthConfidence"_a, "cameraModel"_a, "id"_a, "stamp"_a)
+            .def(nb::init<const cv::Mat &, const cv::Mat &, const std::vector<CameraModel> &, int, double>(), "rgb"_a,
+                 "depth"_a, "cameraModel"_a, "id"_a, "stamp"_a)
             .def(nb::init<const cv::Mat &, const cv::Mat &, const cv::Mat &, const std::vector<CameraModel> &, int,
-                          double>())
+                          double>(),
+                 "rgb"_a, "depth"_a, "depthConfidence"_a, "cameraModel"_a, "id"_a, "stamp"_a)
             .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const std::vector<CameraModel> &, int,
-                          double>())
+                          double>(),
+                 "laserScan"_a, "rgb"_a, "depth"_a, "cameraModel"_a, "id"_a, "stamp"_a)
             .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const cv::Mat &,
-                          const std::vector<CameraModel> &, int, double>())
-            .def(nb::init<const cv::Mat &, const cv::Mat &, const StereoCameraModel &, int, double>())
+                          const std::vector<CameraModel> &, int, double>(),
+                 "laserScan"_a, "rgb"_a, "depth"_a, "depthConfidence"_a, "cameraModel"_a, "id"_a, "stamp"_a)
+            .def(nb::init<const cv::Mat &, const cv::Mat &, const StereoCameraModel &, int, double>(), "left"_a,
+                 "right"_a, "cameraModel"_a, "id"_a, "stamp"_a)
             .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const StereoCameraModel &, int,
-                          double>())
-            .def(nb::init<const cv::Mat &, const cv::Mat &, const std::vector<StereoCameraModel> &, int, double>())
+                          double>(),
+                 "laserScan"_a, "left"_a, "right"_a, "cameraModel"_a, "id"_a, "stamp"_a)
+            .def(nb::init<const cv::Mat &, const cv::Mat &, const std::vector<StereoCameraModel> &, int, double>(),
+                 "rgb"_a, "depth"_a, "cameraModel"_a, "id"_a, "stamp"_a)
             .def(nb::init<const LaserScan &, const cv::Mat &, const cv::Mat &, const std::vector<StereoCameraModel> &,
-                          int, double>())
-            .def(nb::init<const IMU &, int, double>())
+                          int, double>(),
+                 "laserScan"_a, "rgb"_a, "depth"_a, "cameraModel"_a, "id"_a, "stamp"_a)
+            .def(nb::init<const IMU &, int, double>(), "imu"_a, "id"_a, "stamp"_a)
 
             .def("isValid", &SensorData::isValid)
             .def("id", &SensorData::id)
-            .def("setId", &SensorData::setId)
+            .def("setId", &SensorData::setId, "id"_a)
             .def("stamp", &SensorData::stamp)
-            .def("setStamp", &SensorData::setStamp)
+            .def("setStamp", &SensorData::setStamp, "stamp"_a)
             .def("imageCompressed", &SensorData::imageCompressed)
             .def("depthOrRightCompressed", &SensorData::depthOrRightCompressed)
             .def("depthConfidenceCompressed", &SensorData::depthConfidenceCompressed)
@@ -53,36 +65,49 @@ void bindSensorData(nb::module_ &m) {
             .def("depthOrRightRaw", &SensorData::depthOrRightRaw)
             .def("depthConfidenceRaw", &SensorData::depthConfidenceRaw)
             .def("laserScanRaw", &SensorData::laserScanRaw)
-            .def("setRGBDImage", nb::overload_cast<const cv::Mat &, const cv::Mat &, const CameraModel &, bool>(
-                                         &SensorData::setRGBDImage))
-            .def("setRGBDImage", nb::overload_cast<const cv::Mat &, const cv::Mat &, const CameraModel &, bool>(
-                                         &SensorData::setRGBDImage))
             .def("setRGBDImage",
-                 nb::overload_cast<const cv::Mat &, const cv::Mat &, const cv::Mat &, const CameraModel &, bool>(
-                         &SensorData::setRGBDImage))
+                 nb::overload_cast<const cv::Mat &, const cv::Mat &, const CameraModel &, bool>(
+                         &SensorData::setRGBDImage),
+                 "rgb"_a, "depth"_a, "model"_a, "clearPreviousData"_a = true)
+            .def("setRGBDImage",
+                 nb::overload_cast<const cv::Mat &, const cv::Mat &, const CameraModel &, bool>(
+                         &SensorData::setRGBDImage),
+                 "rgb"_a, "depth"_a, "model"_a, "clearPreviousData"_a = true)
             .def("setRGBDImage",
                  nb::overload_cast<const cv::Mat &, const cv::Mat &, const std::vector<CameraModel> &, bool>(
-                         &SensorData::setRGBDImage))
-            .def("setStereoImage", nb::overload_cast<const cv::Mat &, const cv::Mat &, const StereoCameraModel &, bool>(
-                                           &SensorData::setStereoImage))
+                         &SensorData::setRGBDImage),
+                 "rgb"_a, "depth"_a, "models"_a, "clearPreviousData"_a = true)
+            .def("setRGBDImage",
+                 nb::overload_cast<const cv::Mat &, const cv::Mat &, const cv::Mat &, const CameraModel &, bool>(
+                         &SensorData::setRGBDImage),
+                 "rgb"_a, "depth"_a, "depth_confidence"_a, "model"_a, "clearPreviousData"_a = true)
+            .def("setStereoImage",
+                 nb::overload_cast<const cv::Mat &, const cv::Mat &, const StereoCameraModel &, bool>(
+                         &SensorData::setStereoImage),
+                 "left"_a, "right"_a, "stereoCameraModel"_a, "clearPreviousData"_a = true)
             .def("setStereoImage",
                  nb::overload_cast<const cv::Mat &, const cv::Mat &, const std::vector<StereoCameraModel> &, bool>(
-                         &SensorData::setStereoImage))
-            .def("setLaserScan", &SensorData::setLaserScan)
-            .def("setCameraModel", &SensorData::setCameraModel)
-            .def("setCameraModels", &SensorData::setCameraModels)
-            .def("setStereoCameraModel", &SensorData::setStereoCameraModel)
-            .def("setStereoCameraModels", &SensorData::setStereoCameraModels)
+                         &SensorData::setStereoImage),
+                 "left"_a, "right"_a, "stereoCameraModel"_a, "clearPreviousData"_a = true)
+            .def("setLaserScan", &SensorData::setLaserScan, "laserScan"_a, "clearPreviousData"_a = true)
+            .def("setCameraModel", &SensorData::setCameraModel, "model"_a)
+            .def("setCameraModels", &SensorData::setCameraModels, "models"_a)
+            .def("setStereoCameraModel", &SensorData::setStereoCameraModel, "stereoCameraModel"_a)
+            .def("setStereoCameraModels", &SensorData::setStereoCameraModels, "stereoCameraModels"_a)
             .def("depthRaw", &SensorData::depthRaw)
             .def("rightRaw", &SensorData::rightRaw)
+
             .def("uncompressData", nb::overload_cast<>(&SensorData::uncompressData))
 
             .def("cameraModels", &SensorData::cameraModels)
             .def("stereoCameraModels", &SensorData::stereoCameraModels)
-            .def("setUserData", &SensorData::setUserData)
+
+            .def("setUserData", &SensorData::setUserData, "userData"_a, "clearPreviousData"_a = true)
             .def("userDataRaw", &SensorData::userDataRaw)
             .def("userDataCompressed", &SensorData::userDataCompressed)
-            .def("setOccupancyGrid", &SensorData::setOccupancyGrid)
+
+            .def("setOccupancyGrid", &SensorData::setOccupancyGrid, "ground"_a, "obstacles"_a, "empty"_a, "cellSize"_a,
+                 "viewPoint"_a)
             .def("clearOccupancyGridRaw", &SensorData::clearOccupancyGridRaw)
             .def("gridGroundCellsRaw", &SensorData::gridGroundCellsRaw)
             .def("gridGroundCellsCompressed", &SensorData::gridGroundCellsCompressed)
@@ -92,33 +117,42 @@ void bindSensorData(nb::module_ &m) {
             .def("gridEmptyCellsCompressed", &SensorData::gridEmptyCellsCompressed)
             .def("gridCellSize", &SensorData::gridCellSize)
             .def("gridViewPoint", &SensorData::gridViewPoint)
-            .def("setFeatures", &SensorData::setFeatures)
+
+            .def("setFeatures", &SensorData::setFeatures, "keypoints"_a, "keypoints3D"_a, "descriptors"_a)
             .def("keypoints", &SensorData::keypoints)
             .def("keypoints3D", &SensorData::keypoints3D)
             .def("descriptors", &SensorData::descriptors)
-            .def("addGlobalDescriptor", &SensorData::addGlobalDescriptor)
-            .def("setGlobalDescriptors", &SensorData::setGlobalDescriptors)
+
+            .def("addGlobalDescriptor", &SensorData::addGlobalDescriptor, "descriptor"_a)
+            .def("setGlobalDescriptors", &SensorData::setGlobalDescriptors, "descriptors"_a)
             .def("clearGlobalDescriptors", &SensorData::clearGlobalDescriptors)
             .def("globalDescriptors", &SensorData::globalDescriptors)
-            .def("setGroundTruth", &SensorData::setGroundTruth)
+
+            .def("setGroundTruth", &SensorData::setGroundTruth, "pose"_a)
             .def("groundTruth", &SensorData::groundTruth)
-            .def("setGlobalPose", &SensorData::setGlobalPose)
+
+            .def("setGlobalPose", &SensorData::setGlobalPose, "pose"_a, "covariance"_a)
             .def("globalPose", &SensorData::globalPose)
             .def("globalPoseCovariance", &SensorData::globalPoseCovariance)
-            .def("setGPS", &SensorData::setGPS)
+
+            .def("setGPS", &SensorData::setGPS, "gps"_a)
             .def("gps", &SensorData::gps)
-            .def("setIMU", &SensorData::setIMU)
+
+            .def("setIMU", &SensorData::setIMU, "imu"_a)
             .def("imu", &SensorData::imu)
-            .def("setEnvSensors", &SensorData::setEnvSensors)
-            .def("addEnvSensor", &SensorData::addEnvSensor)
+
+            .def("setEnvSensors", &SensorData::setEnvSensors, "sensors"_a)
+            .def("addEnvSensor", &SensorData::addEnvSensor, "sensor"_a)
             .def("envSensors", &SensorData::envSensors)
-            .def("setLandmarks", &SensorData::setLandmarks)
+
+            .def("setLandmarks", &SensorData::setLandmarks, "landmarks"_a)
             .def("landmarks", &SensorData::landmarks)
+
             .def("getMemoryUsed", &SensorData::getMemoryUsed)
-            .def("clearCompressedData", &SensorData::clearCompressedData)
-            .def("clearRawData", &SensorData::clearRawData)
-            .def("isPointVisibleFromCameras", &SensorData::isPointVisibleFromCameras)
-            .def("envSensors", &SensorData::envSensors);
+            .def("clearCompressedData", &SensorData::clearCompressedData, "images"_a = true, "scan"_a = true,
+                 "userData"_a = true)
+            .def("clearRawData", &SensorData::clearRawData, "images"_a = true, "scan"_a = true, "userData"_a = true)
+            .def("isPointVisibleFromCameras", &SensorData::isPointVisibleFromCameras, "pt"_a);
 
     nb::class_<IMU>(m, "IMU")
             .def(nb::init<const cv::Vec4d &,  // qx qy qz qw
@@ -158,13 +192,13 @@ void bindSensorData(nb::module_ &m) {
             .def("latitude", &GeodeticCoords::latitude)
             .def("longitude", &GeodeticCoords::longitude)
             .def("altitude", &GeodeticCoords::altitude)
-            .def("setLatitude", &GeodeticCoords::setLatitude)
-            .def("setLongitude", &GeodeticCoords::setLongitude)
-            .def("setAltitude", &GeodeticCoords::setAltitude)
+            .def("setLatitude", &GeodeticCoords::setLatitude, "value"_a)
+            .def("setLongitude", &GeodeticCoords::setLongitude, "value"_a)
+            .def("setAltitude", &GeodeticCoords::setAltitude, "value"_a)
             .def("toGeocentric_WGS84", &GeodeticCoords::toGeocentric_WGS84)
-            .def("toENU_WGS84", &GeodeticCoords::toENU_WGS84)
-            .def("fromGeocentric_WGS84", &GeodeticCoords::fromGeocentric_WGS84)
-            .def("fromENU_WGS84", &GeodeticCoords::fromENU_WGS84);
+            .def("toENU_WGS84", &GeodeticCoords::toENU_WGS84, "origin"_a)
+            .def("fromGeocentric_WGS84", &GeodeticCoords::fromGeocentric_WGS84, "geocentric"_a)
+            .def("fromENU_WGS84", &GeodeticCoords::fromENU_WGS84, "enu"_a, "origin"_a);
 
     nb::class_<EnvSensor>(m, "EnvSensor")
             .def(nb::init<>())

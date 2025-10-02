@@ -16,7 +16,7 @@ using namespace rtabmap;
 
 void bindFeature2D(nb::module_ &m) {
     nb::class_<Feature2D>(m, "Feature2D")
-            .def_static("create", [](Feature2D::Type type) { return Feature2D::create(type); })
+            .def_static("create", [](Feature2D::Type type) { return Feature2D::create(type); }, "type"_a)
             .def("getMaxFeatures", &Feature2D::getMaxFeatures)
             .def("getSSC", &Feature2D::getSSC)
             .def("getMinDepth", &Feature2D::getMinDepth)

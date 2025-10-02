@@ -35,10 +35,10 @@ void bindOdometry(nb::module_ &m) {
 
     nb::class_<Odometry>(m, "Odometry")
             .def_static("create", []() { Odometry::create(); })
-            .def_static("create", [](Odometry::Type &type) { Odometry::create(type); })
-            .def("process", nb::overload_cast<SensorData &, OdometryInfo *>(&Odometry::process))
-            .def("process", nb::overload_cast<SensorData &, const Transform &, OdometryInfo *>(&Odometry::process))
-            .def("reset", &Odometry::reset)
+            .def_static("create", [](Odometry::Type &type) { Odometry::create(type); }, "type"_a)
+            .def("process", nb::overload_cast<SensorData &, OdometryInfo *>(&Odometry::process), "data"_a, "info"_a)
+            .def("process", nb::overload_cast<SensorData &, const Transform &, OdometryInfo *>(&Odometry::process), "data"_a, "guess"_a, "info"_a)
+            .def("reset", &Odometry::reset, "initialPose"_a)
             .def("getType", &Odometry::getType)
             .def("canProcessRawImages", &Odometry::canProcessRawImages)
             .def("canProcessAsyncIMU", &Odometry::canProcessAsyncIMU)
@@ -51,7 +51,7 @@ void bindOdometry(nb::module_ &m) {
 
     nb::class_<OdometryInfo>(m, "OdometryInfo")
             .def(nb::init<>())
-            .def("statistics", &OdometryInfo::statistics)
+            .def("statistics", &OdometryInfo::statistics, "pose"_a)
             .def_rw("lost", &OdometryInfo::lost)
             .def_rw("reg", &OdometryInfo::reg)
             .def_rw("features", &OdometryInfo::features)

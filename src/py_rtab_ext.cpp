@@ -155,6 +155,6 @@ NB_MODULE(rtab_ext, m) {
 
     nb::class_<ProgressState>(m, "ProgressState")
             .def(nb::init<>())
-            .def("setCanceled", &ProgressState::setCanceled)
+            .def("setCanceled", &ProgressState::setCanceled, "canceled"_a)
             .def("isCanceled", &ProgressState::isCanceled);
 }
