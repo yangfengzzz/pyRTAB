@@ -30,34 +30,47 @@ void bindStereoCameraModel(nb::module_ &m) {
             .def(nb::init<double, double, double, double, double>(), "fx"_a, "fy"_a, "cx"_a, "cy"_a, "baseline"_a)
             .def(nb::init<const std::string &, double, double, double, double, double>(), "name"_a, "fx"_a, "fy"_a,
                  "cx"_a, "cy"_a, "baseline"_a)
+
             .def("isValidForProjection", &StereoCameraModel::isValidForProjection)
             .def("isValidForRectification", &StereoCameraModel::isValidForRectification)
+
             .def("initRectificationMap", &StereoCameraModel::initRectificationMap)
             .def("isRectificationMapInitialized", &StereoCameraModel::isRectificationMapInitialized)
-            .def("setName", &StereoCameraModel::setName)
+
+            .def("setName", &StereoCameraModel::setName, "name"_a, "leftSuffix"_a = "left", "rightSuffix"_a = "right")
             .def("name", &StereoCameraModel::name)
-            .def("setImageSize", &StereoCameraModel::setImageSize)
-            .def("load", &StereoCameraModel::load)
-            .def("save", &StereoCameraModel::save)
-            .def("saveStereoTransform", &StereoCameraModel::saveStereoTransform)
+
+            .def("setImageSize", &StereoCameraModel::setImageSize, "size"_a)
+
+            .def("load", &StereoCameraModel::load, "directory"_a, "cameraName"_a, "ignoreStereoTransform"_a = true)
+            .def("save", &StereoCameraModel::save, "directory"_a, "ignoreStereoTransform"_a = true)
+            .def("saveStereoTransform", &StereoCameraModel::saveStereoTransform, "directory"_a)
             .def("serialize", &StereoCameraModel::serialize)
-            .def("deserialize", nb::overload_cast<const std::vector<unsigned char> &>(&StereoCameraModel::deserialize))
+            .def("deserialize", nb::overload_cast<const std::vector<unsigned char> &>(&StereoCameraModel::deserialize),
+                 "data"_a)
+
             .def("baseline", &StereoCameraModel::baseline)
-            .def("computeDepth", &StereoCameraModel::computeDepth)
-            .def("computeDisparity", nb::overload_cast<float>(&StereoCameraModel::computeDisparity, nb::const_))
+
+            .def("computeDepth", &StereoCameraModel::computeDepth, "disparity"_a)
+            .def("computeDisparity", nb::overload_cast<float>(&StereoCameraModel::computeDisparity, nb::const_),
+                 "depth"_a)
             .def("computeDisparity",
-                 nb::overload_cast<unsigned short>(&StereoCameraModel::computeDisparity, nb::const_))
+                 nb::overload_cast<unsigned short>(&StereoCameraModel::computeDisparity, nb::const_), "depth"_a)
             .def("R", &StereoCameraModel::R)
             .def("T", &StereoCameraModel::T)
             .def("E", &StereoCameraModel::E)
             .def("F", &StereoCameraModel::F)
-            .def("scale", &StereoCameraModel::scale)
-            .def("roi", &StereoCameraModel::roi)
-            .def("setLocalTransform", &StereoCameraModel::setLocalTransform)
+
+            .def("scale", &StereoCameraModel::scale, "scale"_a)
+            .def("roi", &StereoCameraModel::roi, "roi"_a)
+
+            .def("setLocalTransform", &StereoCameraModel::setLocalTransform, "transform"_a)
             .def("localTransform", &StereoCameraModel::localTransform)
             .def("stereoTransform", &StereoCameraModel::stereoTransform)
+
             .def("left", &StereoCameraModel::left)
             .def("right", &StereoCameraModel::right)
+
             .def("getLeftSuffix", &StereoCameraModel::getLeftSuffix)
             .def("getRightSuffix", &StereoCameraModel::getRightSuffix);
 }

@@ -57,7 +57,7 @@ void bindSignature(nb::module_ &m) {
             .def("isLinksModified", &Signature::isLinksModified)
 
             .def("removeAllWords", &Signature::removeAllWords)
-            .def("changeWordsRef", &Signature::changeWordsRef)
+            .def("changeWordsRef", &Signature::changeWordsRef, "oldWordId"_a, "activeWordId"_a)
             // .def("setWords", &Signature::setWords)
             .def("isEnabled", &Signature::isEnabled)
             .def("setEnabled", &Signature::setEnabled, "enabled"_a)
