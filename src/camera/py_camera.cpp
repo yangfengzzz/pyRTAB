@@ -19,6 +19,7 @@ using namespace rtabmap;
 
 void bindCamera(nb::module_& m) {
     nb::class_<Camera, SensorCapture>(m, "Camera")
+            .def("takeImage", [](Camera* camera) { return camera->takeImage(); })
             .def("takeImage", &Camera::takeImage, "info"_a)
             .def("getImageRate", &Camera::getImageRate)
             .def("setImageRate", &Camera::setImageRate, "imageRate"_a)

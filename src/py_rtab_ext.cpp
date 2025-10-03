@@ -64,6 +64,10 @@ NB_MODULE(rtab_ext, m) {
 
     nb::class_<Rtabmap>(m, "Rtabmap")
             .def(nb::init<>())
+    .def("process",
+     nb::overload_cast<const SensorData &, Transform, const cv::Mat &, const std::vector<float> &,
+                       const std::map<std::string, float> &>(&Rtabmap::process),
+     "data"_a, "odomPose"_a, "odomCovariance"_a, "odomVelocity"_a, "externalStats"_a)
             .def("process",
                  nb::overload_cast<const SensorData &, Transform, const cv::Mat &, const std::vector<float> &,
                                    const std::map<std::string, float> &>(&Rtabmap::process),

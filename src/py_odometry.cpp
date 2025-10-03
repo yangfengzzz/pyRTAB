@@ -34,10 +34,12 @@ void bindOdometry(nb::module_ &m) {
             .value("kTypeOpen3D", Odometry::kTypeOpen3D);
 
     nb::class_<Odometry>(m, "Odometry")
-            .def_static("create", []() { Odometry::create(); })
-            .def_static("create", [](Odometry::Type &type) { Odometry::create(type); }, "type"_a)
+            .def_static("create", []() { return Odometry::create(); })
+            .def_static(
+                    "create", [](Odometry::Type &type) { return Odometry::create(type); }, "type"_a)
             .def("process", nb::overload_cast<SensorData &, OdometryInfo *>(&Odometry::process), "data"_a, "info"_a)
-            .def("process", nb::overload_cast<SensorData &, const Transform &, OdometryInfo *>(&Odometry::process), "data"_a, "guess"_a, "info"_a)
+            .def("process", nb::overload_cast<SensorData &, const Transform &, OdometryInfo *>(&Odometry::process),
+                 "data"_a, "guess"_a, "info"_a)
             .def("reset", &Odometry::reset, "initialPose"_a)
             .def("getType", &Odometry::getType)
             .def("canProcessRawImages", &Odometry::canProcessRawImages)

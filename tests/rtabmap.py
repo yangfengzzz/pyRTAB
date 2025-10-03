@@ -1,4 +1,11 @@
+#  Copyright (c) 2025 Feng Yang
+#
+#  I am making my contributions/submissions to this project solely in my
+#  personal capacity and am not conveying any rights to any intellectual
+#  property of any third parties.
+
 import py_rtab
+import numpy as np
 
 if __name__ == '__main__':
     camera = py_rtab.CameraRealSense2("")
@@ -12,7 +19,7 @@ if __name__ == '__main__':
             info = py_rtab.OdometryInfo()
             pose = odom.process(data, info)
 
-            if rtabmap.process(data, pose):
+            if rtabmap.process(data, pose, np.eye(6), {}, {}):
                 if rtabmap.getLoopClosureId() > 0:
                     print("Loop closure detected!\n")
 
