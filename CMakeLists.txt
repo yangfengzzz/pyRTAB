@@ -48,6 +48,7 @@ nanobind_add_module(
 
         src/py_sensor_capture.cpp
         src/camera/py_camera.cpp
+        src/camera/py_camera_images.cpp
 )
 
 add_stub(

@@ -8,6 +8,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/map.h>
 #include <nanobind/stl/tuple.h>
+#include <nanobind/stl/vector.h>
 #include <nanobind/eigen/dense.h>
 #include <rtabmap/core/SensorCapture.h>
 #include "cv_typecaster.h"
