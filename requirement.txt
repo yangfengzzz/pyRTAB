@@ -1,0 +1,6 @@
+nanobind
+
+https://github.com/nvidia-isaac/nvblox/releases/download/v0.0.8/nvblox_torch-0.0.8rc5+cu12ubuntu22-863-py3-none-linux_x86_64.whl
+pyrealsense2
+pytest
+rerun
