@@ -11,10 +11,7 @@ import numpy as np
 import numpy.typing as npt
 import rerun as rr
 import rerun.blueprint as rrb
-import torch
-import cuvslam as vslam
 
-from nvblox_torch.examples.realsense.vslam_utils import from_homogeneous
 from nvblox_torch.mesh import Mesh
 
 
@@ -27,7 +24,7 @@ from nvblox_torch.mesh import Mesh
 
 
 class RerunVisualizer:
-    """Visualizer for cuvslam and nvblox for the nvblox_torch realsense example."""
+    """Visualizer for slam and nvblox for the nvblox_torch realsense example."""
 
     def __init__(self) -> None:
         """Initialize rerun visualizer."""
@@ -40,7 +37,7 @@ class RerunVisualizer:
         self.t_W_C_history: Deque[npt.NDArray] = deque(maxlen=self.trajectory_length)
 
     def _start_rerun_visualizer(self) -> None:
-        rr.init('cuVSLAM Visualizer', spawn=True)
+        rr.init('SLAM Visualizer', spawn=True)
         rr.log('world', rr.ViewCoordinates.RIGHT_HAND_Y_DOWN, static=True)
         rr.send_blueprint(rrb.Blueprint(
             rrb.TimePanel(state='collapsed'),
@@ -92,26 +89,6 @@ class RerunVisualizer:
                 vertex_colors=mesh.vertex_colors().cpu().numpy(),
                 triangle_indices=mesh.triangles().cpu().numpy(),
             ))
-
-    def visualize_cuvslam(self, T_W_C: torch.Tensor, image: npt.NDArray,
-                          observations: List[vslam.Observation]) -> None:
-        """Visualize the cuvslam outputs.
-
-        We visualize:
-        1) The camera pose,
-        2) The image used for tracking and the features
-        3) The past N camera positions as a trajectory.
-
-        Args:
-            T_W_C: The camera pose in the world frame.
-            image: The image used for tracking and the features.
-            observations: The observations used for tracking.
-        """
-        t_W_C, q_W_C = from_homogeneous(T_W_C)
-        self.t_W_C_history.append(t_W_C)
-        self._log_rig_pose(q_W_C, t_W_C)
-        self._log_observations(observations, image)
-        self._log_trajectory()
 
     def visualize_nvblox(self, mesh: Mesh) -> None:
         """Visualize the nvblox mesh.

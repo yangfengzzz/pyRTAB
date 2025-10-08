@@ -8,12 +8,10 @@ import time
 
 import torch
 import argparse
-import cuvslam as vslam
 import sys
 
 from nvblox_torch.examples.realsense.realsense_utils import rs_intrinsics_to_matrix, rs_extrinsics_to_homogeneous
 from nvblox_torch.examples.realsense.realsense_dataloader import RealsenseDataloader
-from nvblox_torch.examples.realsense.vslam_utils import get_vslam_stereo_rig, to_homogeneous
 from nvblox_torch.examples.realsense.visualizer import RerunVisualizer
 from nvblox_torch.projective_integrator_types import ProjectiveIntegratorType
 from nvblox_torch.mapper import Mapper
@@ -52,23 +50,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     """
     This example demonstrates the integration of NVIDIA's nvblox mapping system with
-    Intel RealSense cameras and cuvslam for visual odometry tracking.
-    It captures depth and color data from a RealSense camera, tracks its pose using cuvslam
+    Intel RealSense cameras and slam for visual odometry tracking.
+    It captures depth and color data from a RealSense camera, tracks its pose using slam
     and builds a 3D reconstruction using nvblox.
     """
     args = parse_args()
 
     realsense_dataloader = RealsenseDataloader(max_steps=args.max_frames)
-
-    # Set up cuvslam tracker
-    cfg = vslam.TrackerConfig(async_sba=False,
-                              enable_final_landmarks_export=True,
-                              odometry_mode=vslam.TrackerOdometryMode.Multicamera,
-                              horizontal_stereo_camera=False)
-    rig = get_vslam_stereo_rig(realsense_dataloader.left_infrared_intrinsics(),
-                               realsense_dataloader.right_infrared_intrinsics(),
-                               realsense_dataloader.T_C_left_infrared_C_right_infrared())
-    cuvslam_tracker = vslam.Tracker(rig, cfg)
 
     # Create some parameters
     projective_integrator_params = ProjectiveIntegratorParams()
@@ -97,45 +85,20 @@ def main() -> int:
     last_print_time = time.time()
     last_visualize_mesh_time = time.time()
     dataload_timer = None
-    T_W_C_left_infrared = None
     for frame in realsense_dataloader:
         if dataload_timer is not None:
             dataload_timer.stop()
 
-        # Track camera pose using cuvslam on the left infrared camera
-        with Timer('cuvslam'):
-            if frame['left_infrared_image'] is not None and frame[
-                'right_infrared_image'] is not None:
-                T_W_C_left_infrared = cuvslam_tracker.track(
-                    frame['timestamp'],
-                    (frame['left_infrared_image'], frame['right_infrared_image']))
-                T_W_C_left_infrared = to_homogeneous(T_W_C_left_infrared.pose.translation,
-                                                     T_W_C_left_infrared.pose.rotation)
-                T_W_C_left_infrared = torch.from_numpy(T_W_C_left_infrared).float()
-
         # Do reconstruction using the depth
         with Timer('depth'):
-            if frame['depth'] is not None and \
-                    T_W_C_left_infrared is not None:
-                # TODO(alexmillane, 2025.05.22): The pose used here is slighly wrong. It should be
-                # interpolated between the cuVSLAM poses based on the timestamp.
+            if frame['depth'] is not None:
                 nvblox_mapper.add_depth_frame(frame['depth'], T_W_C_left_infrared, depth_intrinsics)
 
         with Timer('color'):
-            if T_W_C_left_infrared is not None and \
-                    frame['rgb'] is not None:
-                # Convert the left infrared camera pose to the color camera frame
-                T_W_C_color = T_W_C_left_infrared @ T_C_left_infrared_C_color
-                # TODO(alexmillane, 2025.05.22): The pose used here is slighly wrong. It should be
-                # interpolated between the cuVSLAM poses based on the timestamp.
+            if frame['rgb'] is not None:
                 nvblox_mapper.add_color_frame(frame['rgb'], T_W_C_color, color_intrinsics)
 
         with Timer('visualize_rerun'):
-            # Visualize pose. This occurs every time we track.
-            if T_W_C_left_infrared is not None and frame['left_infrared_image'] is not None:
-                visualizer.visualize_cuvslam(T_W_C_left_infrared.cpu().numpy(),
-                                             frame['left_infrared_image'],
-                                             cuvslam_tracker.get_last_observations(0))
             # Visualize mesh. This is performed at an (optionally) reduced rate.
             current_time = time.time()
             if (current_time - last_visualize_mesh_time) >= (1.0 / args.visualize_mesh_hz):
