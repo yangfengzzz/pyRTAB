@@ -89,6 +89,7 @@ void bindTransform(nb::module_ &m) {
             .def("interpolate", &Transform::interpolate, "t"_a, "other"_a)
             .def("normalizeRotation", &Transform::normalizeRotation)
             .def("prettyPrint", &Transform::prettyPrint)
+            .def("__str__", &Transform::prettyPrint)
 
             .def("toEigen4f", &Transform::toEigen4f)
             .def("toEigen4d", &Transform::toEigen4d)

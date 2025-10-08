@@ -8,7 +8,7 @@ import py_rtab
 import numpy as np
 
 if __name__ == '__main__':
-    camera = py_rtab.CameraRealSense2("")
+    camera = py_rtab.CameraRealSense2("146222253630")
     if camera.init():
         odom = py_rtab.Odometry.create()
         rtabmap = py_rtab.Rtabmap()
@@ -19,9 +19,10 @@ if __name__ == '__main__':
             info = py_rtab.OdometryInfo()
             pose = odom.process(data, info)
 
-            if rtabmap.process(data, pose, np.eye(6), {}, {}):
+            if rtabmap.process(data, pose, np.eye(6), [], {}):
                 if rtabmap.getLoopClosureId() > 0:
                     print("Loop closure detected!\n")
+            print(pose)
 
             data = camera.takeImage()
         print("Processed all frames\n")
