@@ -10,7 +10,7 @@ import torch
 import argparse
 import sys
 
-from nvblox_torch.examples.realsense.realsense_utils import rs_intrinsics_to_matrix, rs_extrinsics_to_homogeneous
+from nvblox_torch.examples.realsense.realsense_utils import rs_intrinsics_to_matrix
 from nvblox_torch.examples.realsense.realsense_dataloader import RealsenseDataloader
 from nvblox_torch.examples.realsense.visualizer import RerunVisualizer
 from nvblox_torch.projective_integrator_types import ProjectiveIntegratorType
@@ -71,9 +71,6 @@ def main() -> int:
                            mapper_parameters=mapper_params)
 
     # Set up some constants such as camera extrinsics and intrinsics
-    T_C_left_infrared_C_color = realsense_dataloader.T_C_left_infrared_C_color()
-    T_C_left_infrared_C_color = rs_extrinsics_to_homogeneous(T_C_left_infrared_C_color)
-    T_C_left_infrared_C_color = torch.from_numpy(T_C_left_infrared_C_color).float()
     depth_intrinsics = torch.from_numpy(
         rs_intrinsics_to_matrix(realsense_dataloader.depth_intrinsics())).float()
     color_intrinsics = torch.from_numpy(
