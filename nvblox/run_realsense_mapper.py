@@ -4,19 +4,20 @@
 #  personal capacity and am not conveying any rights to any intellectual
 #  property of any third parties.
 
-import time
-
-import torch
 import argparse
 import sys
+import time
+
+import numpy as np
+import py_rtab
+import torch
+from nvblox_torch.mapper import Mapper
+from nvblox_torch.mapper_params import MapperParams, ProjectiveIntegratorParams
+from nvblox_torch.projective_integrator_types import ProjectiveIntegratorType
+from nvblox_torch.timer import Timer, timer_status_string
 
 from realsense_utils import rs_intrinsics_to_matrix, setup_realsense
 from visualizer import RerunVisualizer
-from nvblox_torch.projective_integrator_types import ProjectiveIntegratorType
-from nvblox_torch.mapper import Mapper
-from nvblox_torch.mapper_params import MapperParams, ProjectiveIntegratorParams
-from nvblox_torch.timer import Timer, timer_status_string
-import py_rtab
 
 # pylint: disable=invalid-name
 
@@ -94,6 +95,13 @@ def main() -> int:
 
         info = py_rtab.OdometryInfo()
         pose = odom.process(data, info)
+        if rtabmap.process(data, pose, np.eye(6), [], {}):
+            stats = rtabmap.getStatistics()
+            correction = stats.mapCorrection()
+            pose = correction * pose
+            if rtabmap.getLoopClosureId() > 0:
+                print("Loop closure detected!\n")
+
         T_W_C_left_infrared = torch.from_numpy(pose.toEigen4f()).float()
 
         # Do reconstruction using the depth
@@ -106,6 +114,9 @@ def main() -> int:
             nvblox_mapper.add_color_frame(rgb, T_W_C_left_infrared, color_intrinsics)
 
         with Timer('visualize_rerun'):
+            # Visualize pose. This occurs every time we track.
+            if T_W_C_left_infrared is not None:
+                visualizer.visualize_slam(T_W_C_left_infrared.cpu().numpy())
             # Visualize mesh. This is performed at an (optionally) reduced rate.
             current_time = time.time()
             if (current_time - last_visualize_mesh_time) >= (1.0 / args.visualize_mesh_hz):

@@ -20,9 +20,12 @@ if __name__ == '__main__':
             pose = odom.process(data, info)
 
             if rtabmap.process(data, pose, np.eye(6), [], {}):
+                stats = rtabmap.getStatistics()
+                correction = stats.mapCorrection()
+                pose = correction * pose
                 if rtabmap.getLoopClosureId() > 0:
                     print("Loop closure detected!\n")
-            print(pose)
+            print(pose.toEigen4f())
 
             data = camera.takeImage()
         print("Processed all frames\n")

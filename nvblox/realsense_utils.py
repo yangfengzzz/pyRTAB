@@ -4,9 +4,8 @@
 #  personal capacity and am not conveying any rights to any intellectual
 #  property of any third parties.
 
-from typing import Tuple
-from dataclasses import dataclass
 import time
+from dataclasses import dataclass
 
 import numpy as np
 import numpy.typing as npt

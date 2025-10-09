@@ -90,6 +90,10 @@ void bindTransform(nb::module_ &m) {
             .def("normalizeRotation", &Transform::normalizeRotation)
             .def("prettyPrint", &Transform::prettyPrint)
             .def("__str__", &Transform::prettyPrint)
+            .def("__mul__", &Transform::operator*)
+            .def("__imul__", &Transform::operator*=)
+            .def("__eq__", &Transform::operator==)
+            .def("__ne__", &Transform::operator!=)
 
             .def("toEigen4f", &Transform::toEigen4f)
             .def("toEigen4d", &Transform::toEigen4d)

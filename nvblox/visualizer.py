@@ -4,15 +4,16 @@
 #  personal capacity and am not conveying any rights to any intellectual
 #  property of any third parties.
 
-from typing import List, Dict, Deque
 from collections import deque
+from typing import Tuple, Dict, Deque
 
 import numpy as np
 import numpy.typing as npt
 import rerun as rr
 import rerun.blueprint as rrb
-
+import torch
 from nvblox_torch.mesh import Mesh
+from scipy.spatial.transform import Rotation
 
 
 # NOTE(alexmillane, 2025.05.22): This is a modified version of the RerunVisualizer class
@@ -22,6 +23,16 @@ from nvblox_torch.mesh import Mesh
 
 # pylint: disable=invalid-name
 
+def from_homogeneous(transform: npt.NDArray) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Convert a 4x4 homogeneous transformation matrix to translation and quaternion rotation.
+    """
+    assert transform.shape == (4, 4)
+    assert transform[3, 3] == 1.0
+    translation = transform[:3, 3]
+    rotation_matrix = transform[:3, :3]
+    rotation_quat = Rotation.from_matrix(rotation_matrix).as_quat()
+    return translation, rotation_quat
 
 class RerunVisualizer:
     """Visualizer for slam and nvblox for the nvblox_torch realsense example."""
@@ -78,3 +89,21 @@ class RerunVisualizer:
             mesh: The nvblox mesh to visualize.
         """
         self._visualize_nvblox_mesh(mesh)
+
+    def visualize_slam(self, T_W_C: torch.Tensor) -> None:
+        """Visualize the cuvslam outputs.
+
+        We visualize:
+        1) The camera pose,
+        2) The image used for tracking and the features
+        3) The past N camera positions as a trajectory.
+
+        Args:
+            T_W_C: The camera pose in the world frame.
+            image: The image used for tracking and the features.
+            observations: The observations used for tracking.
+        """
+        t_W_C, q_W_C = from_homogeneous(T_W_C)
+        self.t_W_C_history.append(t_W_C)
+        self._log_rig_pose(q_W_C, t_W_C)
+        self._log_trajectory()
