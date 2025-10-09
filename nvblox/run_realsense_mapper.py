@@ -77,9 +77,9 @@ def main() -> int:
 
     # Set up some constants such as camera extrinsics and intrinsics
     depth_intrinsics = torch.from_numpy(
-        rs_intrinsics_to_matrix(camera_params.depth_intrinsics())).float()
+        rs_intrinsics_to_matrix(camera_params.depth_intrinsics)).float()
     color_intrinsics = torch.from_numpy(
-        rs_intrinsics_to_matrix(camera_params.color_intrinsics())).float()
+        rs_intrinsics_to_matrix(camera_params.color_intrinsics)).float()
 
     # Visualize in rerun
     visualizer = RerunVisualizer()
@@ -92,12 +92,18 @@ def main() -> int:
         if dataload_timer is not None:
             dataload_timer.stop()
 
+        info = py_rtab.OdometryInfo()
+        pose = odom.process(data, info)
+        T_W_C_left_infrared = torch.from_numpy(pose.toEigen4f()).float()
+
         # Do reconstruction using the depth
-        # with Timer('depth'):
-        #     nvblox_mapper.add_depth_frame(frame['depth'], T_W_C_left_infrared, depth_intrinsics)
-        #
-        # with Timer('color'):
-        #     nvblox_mapper.add_color_frame(frame['rgb'], T_W_C_color, color_intrinsics)
+        with Timer('depth'):
+            depth = torch.from_numpy(data.depthOrRightRaw()).float().to('cuda')
+            nvblox_mapper.add_depth_frame(depth, T_W_C_left_infrared, depth_intrinsics)
+
+        with Timer('color'):
+            rgb = torch.from_numpy(data.imageRaw()).to('cuda')
+            nvblox_mapper.add_color_frame(rgb, T_W_C_left_infrared, color_intrinsics)
 
         with Timer('visualize_rerun'):
             # Visualize mesh. This is performed at an (optionally) reduced rate.
