@@ -48,7 +48,7 @@ class RealSenseCameraParameters:
 
 def setup_realsense(
         flash_emitter_on_off: bool = False
-) -> Tuple[rs.pipeline, RealSenseCameraParameters, rs.frame_queue]:
+) -> RealSenseCameraParameters:
     """
     Initialize and configure the RealSense camera pipeline.
 
@@ -143,7 +143,8 @@ def setup_realsense(
     depth_instrinsics = frames.get_depth_frame().profile.as_video_stream_profile().intrinsics
     color_instrinsics = color_frame.profile.as_video_stream_profile().intrinsics
 
-    return pipeline, RealSenseCameraParameters(
+    pipeline.stop()
+    return RealSenseCameraParameters(
         depth_scale_to_m=depth_scale_to_m,
         T_C_left_infrared_C_right_infrared=T_C_left_infrared_C_right_infrared,
         T_C_left_infrared_C_color=T_C_left_infrared_C_color,
@@ -151,7 +152,7 @@ def setup_realsense(
         right_infrared_intrinsics=right_infrared_intrinsics,
         depth_intrinsics=depth_instrinsics,
         color_intrinsics=color_instrinsics,
-    ), queue
+    )
 
 
 def rs_extrinsics_to_homogeneous(extrinsics: rs.pyrealsense2.extrinsics) -> npt.NDArray:

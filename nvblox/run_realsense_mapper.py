@@ -10,13 +10,13 @@ import torch
 import argparse
 import sys
 
-from nvblox_torch.examples.realsense.realsense_utils import rs_intrinsics_to_matrix
-from nvblox_torch.examples.realsense.realsense_dataloader import RealsenseDataloader
-from nvblox_torch.examples.realsense.visualizer import RerunVisualizer
+from realsense_utils import rs_intrinsics_to_matrix, setup_realsense
+from visualizer import RerunVisualizer
 from nvblox_torch.projective_integrator_types import ProjectiveIntegratorType
 from nvblox_torch.mapper import Mapper
 from nvblox_torch.mapper_params import MapperParams, ProjectiveIntegratorParams
 from nvblox_torch.timer import Timer, timer_status_string
+import py_rtab
 
 # pylint: disable=invalid-name
 
@@ -56,7 +56,12 @@ def main() -> int:
     """
     args = parse_args()
 
-    realsense_dataloader = RealsenseDataloader(max_steps=args.max_frames)
+    camera_params = setup_realsense(flash_emitter_on_off=True)
+    camera = py_rtab.CameraRealSense2("146222253630")
+    if camera.init():
+        odom = py_rtab.Odometry.create()
+        rtabmap = py_rtab.Rtabmap()
+        rtabmap.init()
 
     # Create some parameters
     projective_integrator_params = ProjectiveIntegratorParams()
@@ -72,9 +77,9 @@ def main() -> int:
 
     # Set up some constants such as camera extrinsics and intrinsics
     depth_intrinsics = torch.from_numpy(
-        rs_intrinsics_to_matrix(realsense_dataloader.depth_intrinsics())).float()
+        rs_intrinsics_to_matrix(camera_params.depth_intrinsics())).float()
     color_intrinsics = torch.from_numpy(
-        rs_intrinsics_to_matrix(realsense_dataloader.color_intrinsics())).float()
+        rs_intrinsics_to_matrix(camera_params.color_intrinsics())).float()
 
     # Visualize in rerun
     visualizer = RerunVisualizer()
@@ -82,18 +87,17 @@ def main() -> int:
     last_print_time = time.time()
     last_visualize_mesh_time = time.time()
     dataload_timer = None
-    for frame in realsense_dataloader:
+    data = camera.takeImage()
+    while data.isValid():
         if dataload_timer is not None:
             dataload_timer.stop()
 
         # Do reconstruction using the depth
-        with Timer('depth'):
-            if frame['depth'] is not None:
-                nvblox_mapper.add_depth_frame(frame['depth'], T_W_C_left_infrared, depth_intrinsics)
-
-        with Timer('color'):
-            if frame['rgb'] is not None:
-                nvblox_mapper.add_color_frame(frame['rgb'], T_W_C_color, color_intrinsics)
+        # with Timer('depth'):
+        #     nvblox_mapper.add_depth_frame(frame['depth'], T_W_C_left_infrared, depth_intrinsics)
+        #
+        # with Timer('color'):
+        #     nvblox_mapper.add_color_frame(frame['rgb'], T_W_C_color, color_intrinsics)
 
         with Timer('visualize_rerun'):
             # Visualize mesh. This is performed at an (optionally) reduced rate.
@@ -114,6 +118,7 @@ def main() -> int:
             last_print_time = current_time
 
         # This timer times how long it takes to get the next frame
+        data = camera.takeImage()
         dataload_timer = Timer('dataload')
 
     # Print final timing statistics

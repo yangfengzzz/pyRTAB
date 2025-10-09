@@ -58,25 +58,6 @@ class RerunVisualizer:
                 colors=[[255, 0, 0], [0, 255, 0], [0, 0, 255]]  # RGB for XYZ axes
             ))
 
-    def _log_observations(self, observations_main_cam: List[vslam.Observation],
-                          image: npt.NDArray) -> None:
-        """Log 2D observations for a specific camera with consistent colors per track."""
-        if not observations_main_cam:
-            return
-
-        # Assign random color to new tracks
-        for obs in observations_main_cam:
-            if obs.id not in self.track_colors:
-                self.track_colors[obs.id] = np.random.randint(0, 256, size=3)
-
-        points = np.array([[obs.u, obs.v] for obs in observations_main_cam])
-        colors = np.array([self.track_colors[obs.id] for obs in observations_main_cam])
-
-        rr.log('world/camera_0/observations', rr.Points2D(positions=points,
-                                                          colors=colors,
-                                                          radii=5.0),
-               rr.Image(image).compress())
-
     def _log_trajectory(self) -> None:
         """Log the trajectory to Rerun."""
         rr.log('world/trajectory', rr.LineStrips3D(self.t_W_C_history), static=True)
