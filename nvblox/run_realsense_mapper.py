@@ -98,7 +98,7 @@ def main() -> int:
 
         # Do reconstruction using the depth
         with Timer('depth'):
-            depth = torch.from_numpy(data.depthOrRightRaw()).float().to('cuda')
+            depth = torch.from_numpy(data.depthOrRightRaw() * camera_params.depth_scale_to_m).float().to('cuda')
             nvblox_mapper.add_depth_frame(depth, T_W_C_left_infrared, depth_intrinsics)
 
         with Timer('color'):
