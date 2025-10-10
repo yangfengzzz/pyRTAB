@@ -89,20 +89,24 @@ def main() -> int:
     last_visualize_mesh_time = time.time()
     dataload_timer = None
     data = camera.takeImage()
+    lastOdomPose = py_rtab.Transform()
+    odometryCorrection = py_rtab.Transform()
     while data.isValid():
         if dataload_timer is not None:
             dataload_timer.stop()
 
         info = py_rtab.OdometryInfo()
         pose = odom.process(data, info)
+        if pose.isNull():
+            pose = lastOdomPose.clone()
         if rtabmap.process(data, pose, np.eye(6), [], {}):
             stats = rtabmap.getStatistics()
-            correction = stats.mapCorrection()
-            pose = correction * pose
+            odometryCorrection = stats.mapCorrection()
             if rtabmap.getLoopClosureId() > 0:
                 print("Loop closure detected!\n")
 
-        T_W_C_left_infrared = torch.from_numpy(pose.toEigen4f()).float()
+        T_W_C_left_infrared = torch.from_numpy((odometryCorrection * pose).toEigen4f()).float()
+        lastOdomPose = pose.clone()
 
         # Do reconstruction using the depth
         with Timer('depth'):

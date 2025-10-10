@@ -2461,6 +2461,9 @@ class StereoCameraModel:
 
 class Transform:
     @overload
+    def __init__(self) -> None: ...
+
+    @overload
     def __init__(self, r11: float, r12: float, r13: float, o14: float, r21: float, r22: float, r23: float, o24: float, r31: float, r32: float, r33: float, o34: float) -> None: ...
 
     @overload

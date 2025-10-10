@@ -18,6 +18,7 @@ using namespace rtabmap;
 
 void bindTransform(nb::module_ &m) {
     nb::class_<Transform>(m, "Transform")
+            .def(nb::init<>())
             .def(nb::init<float, float, float, float, float, float, float, float, float, float, float, float>(),
                  "r11"_a, "r12"_a, "r13"_a, "o14"_a, "r21"_a, "r22"_a, "r23"_a, "o24"_a, "r31"_a, "r32"_a, "r33"_a,
                  "o34"_a)

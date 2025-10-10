@@ -34,6 +34,7 @@ def from_homogeneous(transform: npt.NDArray) -> Tuple[np.ndarray, np.ndarray]:
     rotation_quat = Rotation.from_matrix(rotation_matrix).as_quat()
     return translation, rotation_quat
 
+
 class RerunVisualizer:
     """Visualizer for slam and nvblox for the nvblox_torch realsense example."""
 
@@ -49,29 +50,24 @@ class RerunVisualizer:
 
     def _start_rerun_visualizer(self) -> None:
         rr.init('SLAM Visualizer', spawn=True)
-        rr.log('world', rr.ViewCoordinates.RIGHT_HAND_Y_DOWN, static=True)
+        rr.log('world', rr.ViewCoordinates.RIGHT_HAND_Z_UP, static=True)
         rr.send_blueprint(rrb.Blueprint(
             rrb.TimePanel(state='collapsed'),
             rrb.Horizontal(column_shares=[0.5, 0.5],
                            contents=[
-                               rrb.Spatial2DView(origin='world/camera_0'),
                                rrb.Spatial3DView(origin='world'),
                            ])),
             make_active=True)
 
-    def _log_rig_pose(self, q_W_C: npt.NDArray, t_W_C: npt.NDArray) -> None:
-        """Log rig pose to Rerun."""
-        rr.log(
-            'world/camera_0',
-            rr.Transform3D(translation=t_W_C, quaternion=q_W_C),
-            rr.Arrows3D(
-                vectors=np.eye(3) * self.camera_pose_axis_scale,
-                colors=[[255, 0, 0], [0, 255, 0], [0, 0, 255]]  # RGB for XYZ axes
-            ))
+    #######################################################################################
+    def visualize_nvblox(self, mesh: Mesh) -> None:
+        """Visualize the nvblox mesh.
 
-    def _log_trajectory(self) -> None:
-        """Log the trajectory to Rerun."""
-        rr.log('world/trajectory', rr.LineStrips3D(self.t_W_C_history), static=True)
+        Args:
+            mesh: The nvblox mesh to visualize.
+        """
+        self._visualize_nvblox_mesh(mesh)
+
 
     def _visualize_nvblox_mesh(self, mesh: Mesh) -> None:
         rr.log(
@@ -82,14 +78,7 @@ class RerunVisualizer:
                 triangle_indices=mesh.triangles().cpu().numpy(),
             ))
 
-    def visualize_nvblox(self, mesh: Mesh) -> None:
-        """Visualize the nvblox mesh.
-
-        Args:
-            mesh: The nvblox mesh to visualize.
-        """
-        self._visualize_nvblox_mesh(mesh)
-
+    ########################################################################################
     def visualize_slam(self, T_W_C: torch.Tensor) -> None:
         """Visualize the cuvslam outputs.
 
@@ -107,3 +96,17 @@ class RerunVisualizer:
         self.t_W_C_history.append(t_W_C)
         self._log_rig_pose(q_W_C, t_W_C)
         self._log_trajectory()
+
+    def _log_rig_pose(self, q_W_C: npt.NDArray, t_W_C: npt.NDArray) -> None:
+        """Log rig pose to Rerun."""
+        rr.log(
+            'world/camera_0',
+            rr.Transform3D(translation=t_W_C, quaternion=q_W_C),
+            rr.Arrows3D(
+                vectors=np.eye(3) * self.camera_pose_axis_scale,
+                colors=[[255, 0, 0], [0, 255, 0], [0, 0, 255]]  # RGB for XYZ axes
+            ))
+
+    def _log_trajectory(self) -> None:
+        """Log the trajectory to Rerun."""
+        rr.log('world/trajectory', rr.LineStrips3D(self.t_W_C_history), static=True)
